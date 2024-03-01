@@ -30,8 +30,13 @@ public class User implements UserDetails {
     private Integer id;
     private String firstname;
     private String lastname;
+    private String district;
+    private String schoolName;
+    private String address;
     private String email;
     private String password;
+
+    private boolean isApproved;
 
     @Enumerated(EnumType.STRING)
     private Role role;

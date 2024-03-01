@@ -10,10 +10,28 @@ public enum Permission {
     ADMIN_UPDATE("admin:update"),
     ADMIN_CREATE("admin:create"),
     ADMIN_DELETE("admin:delete"),
-    MANAGER_READ("management:read"),
-    MANAGER_UPDATE("management:update"),
-    MANAGER_CREATE("management:create"),
-    MANAGER_DELETE("management:delete")
+    IS_READ("is:read"),
+    IS_UPDATE("is:update"),
+    IS_CREATE("is:create"),
+    IS_DELETE("is:delete"),
+
+    PVT_SCHOOL_CREATE("pvt_school:create"),
+    PVT_SCHOOL_READ("pvt_school:read"),
+    PVT_SCHOOL_UPDATE("pvt_school:update"),
+    PVT_SCHOOL_DELETE("pvt_school:delete"),
+
+    GOVT_SCHOOL_CREATE("govt_school:create"),
+    GOVT_SCHOOL_READ("govt_school:read"),
+    GOVT_SCHOOL_UPDATE("govt_school:update"),
+    GOVT_SCHOOL_DELETE("govt_school:delete"),
+
+    DEO_CREATE("deo_school:create"),
+    DEO_READ("deo_school:read"),
+    DEO_UPDATE("deo_school:update"),
+    DEO_DELETE("deo_school:delete")
+    
+
+
 
     ;
 

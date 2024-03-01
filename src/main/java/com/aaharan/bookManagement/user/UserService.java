@@ -6,6 +6,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -13,6 +15,7 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository repository;
+
     public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
 
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
@@ -31,5 +34,23 @@ public class UserService {
 
         // save the new password
         repository.save(user);
+    }
+
+    public List<UserDto> getAllUsers() {
+        List<User> allUsers = repository.findAll();
+        List<UserDto> resultDto = new ArrayList<>();
+        allUsers.forEach(it -> {
+            UserDto userDto = new UserDto();
+            userDto.setFirstName(it.getFirstname());
+            userDto.setLastName(it.getLastname());
+            userDto.setEmail(it.getEmail());
+            userDto.setApproved(it.isApproved());
+            userDto.setRole(it.getRole());
+            resultDto.add(userDto);
+        });
+
+
+        return resultDto;
+
     }
 }

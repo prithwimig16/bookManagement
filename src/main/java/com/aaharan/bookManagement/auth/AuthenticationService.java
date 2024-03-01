@@ -5,6 +5,7 @@ import com.aaharan.bookManagement.config.JwtService;
 import com.aaharan.bookManagement.token.Token;
 import com.aaharan.bookManagement.token.TokenRepository;
 import com.aaharan.bookManagement.token.TokenType;
+import com.aaharan.bookManagement.user.Role;
 import com.aaharan.bookManagement.user.User;
 import com.aaharan.bookManagement.user.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,6 +38,9 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(request.getRole())
                 .build();
+        if(request.getRole()== Role.ADMIN){
+            user.setApproved(true);
+        }
         var savedUser = repository.save(user);
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);

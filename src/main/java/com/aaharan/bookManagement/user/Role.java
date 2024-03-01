@@ -1,4 +1,5 @@
 package com.aaharan.bookManagement.user;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,7 +13,7 @@ import static com.aaharan.bookManagement.user.Permission.*;
 
 @RequiredArgsConstructor
 public enum Role {
-
+//Info: ADMIN is State
     USER(Collections.emptySet()),
     ADMIN(
             Set.of(
@@ -20,22 +21,58 @@ public enum Role {
                     ADMIN_UPDATE,
                     ADMIN_DELETE,
                     ADMIN_CREATE,
-                    MANAGER_READ,
-                    MANAGER_UPDATE,
-                    MANAGER_DELETE,
-                    MANAGER_CREATE
+                    PVT_SCHOOL_READ,
+                    PVT_SCHOOL_CREATE,
+                    PVT_SCHOOL_UPDATE,
+                    PVT_SCHOOL_DELETE,
+                    GOVT_SCHOOL_READ,
+                    GOVT_SCHOOL_CREATE,
+                    GOVT_SCHOOL_UPDATE,
+                    GOVT_SCHOOL_DELETE,
+                    DEO_READ,
+                    DEO_UPDATE,
+                    DEO_DELETE,
+                    DEO_CREATE,
+                    IS_READ,
+                    IS_UPDATE,
+                    IS_DELETE,
+                    IS_CREATE
             )
     ),
-    MANAGER(
-            Set.of(
-                    MANAGER_READ,
-                    MANAGER_UPDATE,
-                    MANAGER_DELETE,
-                    MANAGER_CREATE
-            )
-    )
 
-    ;
+    PVT_SCHOOL(
+            Set.of(
+                    PVT_SCHOOL_READ,
+                    PVT_SCHOOL_UPDATE,
+                    PVT_SCHOOL_DELETE,
+                    PVT_SCHOOL_CREATE
+            )
+    ),
+    GOVT_SCHOOL(
+            Set.of(
+                    GOVT_SCHOOL_READ,
+                    GOVT_SCHOOL_UPDATE,
+                    GOVT_SCHOOL_DELETE,
+                    GOVT_SCHOOL_CREATE
+            )
+    ),
+
+    DEO(
+            Set.of(
+                    DEO_READ,
+                    DEO_UPDATE,
+                    DEO_DELETE,
+                    DEO_CREATE
+            )
+    ),
+    IS(
+            Set.of(
+                    IS_READ,
+                    IS_UPDATE,
+                    IS_DELETE,
+                    IS_CREATE
+            )
+    );
 
     @Getter
     private final Set<Permission> permissions;
