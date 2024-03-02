@@ -1,6 +1,12 @@
 package com.aaharan.bookManagement.auth;
 
 import com.aaharan.bookManagement.auth.login.LoginRequest;
+import com.aaharan.bookManagement.deo.Deo;
+import com.aaharan.bookManagement.deo.DeoRepository;
+import com.aaharan.bookManagement.school.School;
+import com.aaharan.bookManagement.school.SchoolRepository;
+import com.aaharan.bookManagement.user.Role;
+import com.aaharan.bookManagement.user.User;
 import com.aaharan.bookManagement.user.UserRepository;
 import com.aaharan.bookManagement.utils.GenericResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -25,32 +32,58 @@ public class AuthenticationController {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    SchoolRepository schoolRepository;
+
+    @Autowired
+    DeoRepository deoRepository;
+
 
     @PostMapping("/register")
-    public GenericResponse<RegisterRequest> register(@RequestBody RegisterRequest request) {
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+    public GenericResponse<RegisterRequest> register(@RequestBody RegisterRequest user) {
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             return GenericResponse.<RegisterRequest>builder()
                     .success(false)
                     .data(null)
                     .message("User already Exist")
                     .build();
         }
-        var user = RegisterRequest.builder()
-                .firstname(request.getFirstname())
-                .lastname(request.getLastname())
-                .email(request.getEmail())
-                .password(request.getPassword())
-                .role(request.getRole())
-                .build();
+//        var newUser = RegisterRequest.builder()
+//                .firstname(user.getFirstname())
+//                .lastname(user.getLastname())
+//                .email(user.getEmail())
+//                .password(user.getPassword())
+//                .roleName(user.getRole().name())
+//                .build();
 
         service.register(user);
-        return GenericResponse.success(request);
+//        if (user.getRole().equals(Role.IS)) {
+//            //districtwise multiple
+//        }
+//        if(user.getRole().equals(Role.SCHOOL)){
+//            School school=new School();
+//            school.setUser(user);
+//            school.setCreatedAt(LocalDateTime.now());
+//            school.setUpdatedAt(LocalDateTime.now());
+//            schoolRepository.updateApprovalStatus(true,user.getId());
+//        }
+//
+//        if (user.getRole().equals(Role.DEO)) {
+//            Deo deo=new Deo();
+//            deo.setUser(user);
+//            deo.setCreatedAt(LocalDateTime.now());
+//            deo.setUpdatedAt(LocalDateTime.now());
+//            deoRepository.updateApprovalStatus(true,user.getId());
+//
+//        }
+        return GenericResponse.success(user);
 
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> login(@RequestBody LoginRequest request) throws HttpClientErrorException.Unauthorized {
-        return ResponseEntity.ok(service.login(request));
+    public GenericResponse<AuthenticationResponse> login(@RequestBody LoginRequest request) throws HttpClientErrorException.Unauthorized {
+
+        return GenericResponse.success(service.login(request));
     }
 
     @PostMapping("/authenticate")

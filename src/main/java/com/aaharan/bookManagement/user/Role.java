@@ -21,14 +21,10 @@ public enum Role {
                     ADMIN_UPDATE,
                     ADMIN_DELETE,
                     ADMIN_CREATE,
-                    PVT_SCHOOL_READ,
-                    PVT_SCHOOL_CREATE,
-                    PVT_SCHOOL_UPDATE,
-                    PVT_SCHOOL_DELETE,
-                    GOVT_SCHOOL_READ,
-                    GOVT_SCHOOL_CREATE,
-                    GOVT_SCHOOL_UPDATE,
-                    GOVT_SCHOOL_DELETE,
+                    SCHOOL_READ,
+                    SCHOOL_CREATE,
+                    SCHOOL_UPDATE,
+                    SCHOOL_DELETE,
                     DEO_READ,
                     DEO_UPDATE,
                     DEO_DELETE,
@@ -40,20 +36,12 @@ public enum Role {
             )
     ),
 
-    PVT_SCHOOL(
+    SCHOOL(
             Set.of(
-                    PVT_SCHOOL_READ,
-                    PVT_SCHOOL_UPDATE,
-                    PVT_SCHOOL_DELETE,
-                    PVT_SCHOOL_CREATE
-            )
-    ),
-    GOVT_SCHOOL(
-            Set.of(
-                    GOVT_SCHOOL_READ,
-                    GOVT_SCHOOL_UPDATE,
-                    GOVT_SCHOOL_DELETE,
-                    GOVT_SCHOOL_CREATE
+                    SCHOOL_READ,
+                    SCHOOL_UPDATE,
+                    SCHOOL_DELETE,
+                    SCHOOL_CREATE
             )
     ),
 

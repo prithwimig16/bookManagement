@@ -1,48 +1,57 @@
 package com.aaharan.bookManagement.user;
+
+import com.aaharan.bookManagement.role.BmRole;
 import com.aaharan.bookManagement.token.Token;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import java.util.Collection;
-import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.context.annotation.Primary;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.Hibernate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-@Data
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "_user")
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @Column(nullable = false, length = 80)
     private String firstname;
+    @Column(nullable = false, length = 80)
     private String lastname;
-    private String district;
-    private String schoolName;
-    private String address;
+    @Column(unique = true, nullable = false, length = 40)
     private String email;
+    @Column(nullable = false, length = 128)
     private String password;
-
+    @Column(nullable = true, columnDefinition = "tinyint(1) default 0")
     private boolean isApproved;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
     @OneToMany(mappedBy = "user")
+    @ToString.Exclude
     private List<Token> tokens;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "USER_ROLES",
+            joinColumns = {
+                    @JoinColumn(name = "USER_ID")
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = "ROLE_ID") })
+    private Set<BmRole> roles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -77,5 +86,18 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        User user = (User) o;
+        return id != null && Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

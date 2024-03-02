@@ -1,17 +1,28 @@
 package com.aaharan.bookManagement.auth;
 
 import com.aaharan.bookManagement.auth.login.LoginRequest;
+import com.aaharan.bookManagement.config.AppConstraints;
 import com.aaharan.bookManagement.config.JwtService;
+import com.aaharan.bookManagement.deo.Deo;
+import com.aaharan.bookManagement.deo.DeoRepository;
+import com.aaharan.bookManagement.model.enums.RoleName;
+import com.aaharan.bookManagement.role.BmRole;
+import com.aaharan.bookManagement.role.RoleService;
+import com.aaharan.bookManagement.school.School;
+import com.aaharan.bookManagement.school.SchoolRepository;
 import com.aaharan.bookManagement.token.Token;
 import com.aaharan.bookManagement.token.TokenRepository;
 import com.aaharan.bookManagement.token.TokenType;
 import com.aaharan.bookManagement.user.Role;
 import com.aaharan.bookManagement.user.User;
+import com.aaharan.bookManagement.user.UserDto;
 import com.aaharan.bookManagement.user.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +31,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -28,22 +43,67 @@ public class AuthenticationService {
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    @Autowired
+    private RoleService roleService;
+
+    @Autowired
+    private SchoolRepository schoolRepository;
+
+    @Autowired
+    private DeoRepository deoRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest request) {
-        var user = User.builder()
+        Role userRole = Role.ADMIN;
+        if(request.getRoleName().equals(AppConstraints.ROLE_SCHOOL)){
+            userRole=Role.SCHOOL;
+        }
+        if(request.getRoleName().equals(AppConstraints.ROLE_DEO)){
+            userRole=Role.DEO;
+        }
+        var nUser = User.builder()
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(request.getRole())
+                .role(userRole)
                 .build();
-        if(request.getRole()== Role.ADMIN){
-            user.setApproved(true);
+        if (userRole.equals(Role.ADMIN)) {
+            nUser.setApproved(true);
         }
-        var savedUser = repository.save(user);
-        var jwtToken = jwtService.generateToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
+
+        BmRole role = Stream.of(AppConstraints.ROLE_ADMIN, AppConstraints.ROLE_DEO, AppConstraints.ROLE_SCHOOL, AppConstraints.ROLE_IS)
+                .filter(roleName -> roleName.equals(request.getRoleName()))
+                .map(roleName -> roleService.findByName(RoleName.valueOf(roleName.toUpperCase())))
+                .findFirst().orElse(null);
+
+        Set<BmRole> roleSet = new HashSet<>();
+        roleSet.add(role);
+
+        nUser.setRoles(roleSet);
+        var savedUser = repository.save(nUser);
+        assert role != null;
+        if (role.getRoleName() != null) {
+            if (role.getRoleName().equals(RoleName.SCHOOL)) {
+                School school = new School();
+                school.setUser(savedUser);
+                school.setCreatedAt(LocalDateTime.now());
+                school.setUpdatedAt(LocalDateTime.now());
+                schoolRepository.save(school);
+            }
+            if (role.getRoleName().equals(RoleName.DEO)) {
+                Deo deo = new Deo();
+                deo.setUser(savedUser);
+                deo.setCreatedAt(LocalDateTime.now());
+                deo.setUpdatedAt(LocalDateTime.now());
+                deoRepository.save(deo);
+            }
+        }
+        var jwtToken = jwtService.generateToken(nUser);
+        var refreshToken = jwtService.generateRefreshToken(nUser);
         saveUserToken(savedUser, jwtToken);
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
@@ -51,10 +111,12 @@ public class AuthenticationService {
                 .build();
     }
 
-    public AuthenticationResponse login(LoginRequest request) throws  HttpClientErrorException.Unauthorized {
-         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+    public AuthenticationResponse login(LoginRequest request) throws HttpClientErrorException.Unauthorized {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         var user = repository.findByEmail(request.getEmail())
                 .orElseThrow();
+        UserDto userDto = this.modelMapper.map(user, UserDto.class);
+
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         revokeAllUserTokens(user);
@@ -62,7 +124,11 @@ public class AuthenticationService {
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
+                .user(userDto)
+                .access_token_validity(86400000)
+                .refresh_token_validity(604800000)
                 .build();
+        //return GenericResponse.success(response);
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {

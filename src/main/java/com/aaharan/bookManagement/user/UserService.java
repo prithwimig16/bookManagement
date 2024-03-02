@@ -45,7 +45,7 @@ public class UserService {
             userDto.setLastName(it.getLastname());
             userDto.setEmail(it.getEmail());
             userDto.setApproved(it.isApproved());
-            userDto.setRole(it.getRole());
+//            userDto.setRole(it.getRole());
             resultDto.add(userDto);
         });
 

@@ -3,6 +3,7 @@ package com.aaharan.bookManagement.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,10 +15,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
-import static com.aaharan.bookManagement.user.Permission.*;
-import static com.aaharan.bookManagement.user.Role.ADMIN;
-import static com.aaharan.bookManagement.user.Role.IS;
-import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -28,10 +25,10 @@ public class SecurityConfiguration {
 
     private static final String[] WHITE_LIST_URL = {
             "/api/v1/welcome",
-            "/api/v1/users",
             "/api/v1/auth/**",
-            "/api/v1/auth/login",
-            "/api/v1/auth/register",
+//            "/api/v1/users",
+//            "/api/v1/auth/login",
+//            "/api/v1/auth/register",
             "/v2/api-docs",
             "/v3/api-docs",
             "/v3/api-docs/**",
@@ -51,15 +48,16 @@ public class SecurityConfiguration {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
-                        req.requestMatchers(WHITE_LIST_URL)
-                                .permitAll()
-                                .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), IS.name())
-                                .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), IS_READ.name())
-                                .requestMatchers(POST, "/api/v1/management/**").hasAnyAuthority(ADMIN_CREATE.name(), IS_CREATE.name())
-                                .requestMatchers(PUT, "/api/v1/management/**").hasAnyAuthority(ADMIN_UPDATE.name(), IS_UPDATE.name())
-                                .requestMatchers(DELETE, "/api/v1/management/**").hasAnyAuthority(ADMIN_DELETE.name(), IS_DELETE.name())
-                                .anyRequest()
-                                .authenticated()
+                                req.requestMatchers(WHITE_LIST_URL)
+                                        .permitAll()
+                                        .requestMatchers(HttpMethod.OPTIONS).permitAll()
+                                        .requestMatchers("/**")
+//                                .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), IS.name())
+//                                .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), IS_READ.name())
+//                                .requestMatchers(POST, "/api/v1/management/**").hasAnyAuthority(ADMIN_CREATE.name(), IS_CREATE.name())
+//                                .requestMatchers(PUT, "/api/v1/management/**").hasAnyAuthority(ADMIN_UPDATE.name(), IS_UPDATE.name())
+//                                .requestMatchers(DELETE, "/api/v1/management/**").hasAnyAuthority(ADMIN_DELETE.name(), IS_DELETE.name())
+                                        .authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider)
@@ -72,8 +70,9 @@ public class SecurityConfiguration {
 
         return http.build();
     }
+
     @Bean
-    public AuthenticationEntryPoint authenticationEntryPoint(){
+    public AuthenticationEntryPoint authenticationEntryPoint() {
         return new CustomAuthenticationEntryPoint();
     }
 
