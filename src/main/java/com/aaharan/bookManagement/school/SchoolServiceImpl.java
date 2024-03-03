@@ -1,6 +1,5 @@
 package com.aaharan.bookManagement.school;
 
-import com.aaharan.bookManagement.user.UserDto;
 import com.amazonaws.services.dlm.model.ResourceNotFoundException;
 import jakarta.annotation.Resource;
 import jakarta.transaction.Transactional;
@@ -40,9 +39,10 @@ public class SchoolServiceImpl implements SchoolService {
 
 
     @Override
-    public School getByID(int id) {
-        return this.repository.findById(id).
-                orElseThrow(() -> new ResourceNotFoundException("Id does not exist"));
+    public SchoolDto getByID(int id) {
+        School schoolObj = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("School id doesn't exist"));
+        return this.modelMapper.map(schoolObj, SchoolDto.class);
     }
 
     @Override
@@ -59,9 +59,10 @@ public class SchoolServiceImpl implements SchoolService {
 
 
     @Override
-    public School getByUserId(int userId) {
-        return repository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User id doesn't exist"));
+    public SchoolDto getByUserId(int userId) {
+        School schoolObj = repository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("School id doesn't exist"));
+        return this.modelMapper.map(schoolObj, SchoolDto.class);
     }
 
 
@@ -73,8 +74,14 @@ public class SchoolServiceImpl implements SchoolService {
     }
 
     @Override
-    public List<School> getAllByCriteria(Specification<School> specification, Pageable pageable) {
-        return this.repository.findAll(specification, pageable);
+    public List<SchoolDto> getAllByCriteria(Specification<School> specification, Pageable pageable) {
+        List<School> allIsList = this.repository.findAll(specification, pageable);
+        List<SchoolDto> resultList = new ArrayList<>();
+
+        allIsList.forEach(it -> {
+            resultList.add(this.modelMapper.map(it, SchoolDto.class));
+        });
+        return resultList;
     }
 
     @Override

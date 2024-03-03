@@ -69,6 +69,9 @@ public class AuthenticationService {
         if(request.getRoleName().equals(AppConstraints.ROLE_DEO)){
             userRole=Role.DEO;
         }
+        if(request.getRoleName().equals(AppConstraints.ROLE_IS)){
+            userRole=Role.IS;
+        }
         var nUser = User.builder()
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())

@@ -21,7 +21,7 @@ public class Deo {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer id;
-    @Column(nullable = true,length = 20)
+    @Column(unique = true,nullable = true,length = 20)
     private String district;
     @Column(nullable = true,length = 300)
     private String address;

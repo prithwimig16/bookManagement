@@ -24,21 +24,21 @@ public class DeoController {
     @Autowired
     private DeoService service;
 
-    @GetMapping("/")
+    @GetMapping("")
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "This method getting all the list of schools available in the system")
-    public GenericResponse<List<Deo>> getAll(@RequestParam(defaultValue = "0", required = false) Integer page,
+    public GenericResponse<List<DeoDto>> getAll(@RequestParam(defaultValue = "0", required = false) Integer page,
                                                 @RequestParam(defaultValue = "5", required = false) Integer pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
         return GenericResponse.success(new ArrayList<>(service.getAll(pageable)));
     }
 
     @PutMapping("/user/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SCHOOL')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEO')")
     @ApiOperation(value = "Update a particular school by id")
-    public GenericResponse<Deo> updateByUserId(@Valid @ModelAttribute Deo deo, @PathVariable int id) {
-        Deo updatedSchool = service.updateByUserId(deo, id);
-        return GenericResponse.success(updatedSchool);
+    public GenericResponse<DeoDto> updateByUserId(@RequestBody  Deo deo, @PathVariable int id) {
+        DeoDto updatedResult = service.updateByUserId(deo, id);
+        return GenericResponse.success(updatedResult);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -60,27 +60,27 @@ public class DeoController {
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'DEO')")
     @ApiOperation(value = "Get a particular deo by id")
-    public GenericResponse<Deo> getByID(@PathVariable int id) {
+    public GenericResponse<DeoDto> getByID(@PathVariable int id) {
         return GenericResponse.success(this.service.getByID(id));
     }
 
     @GetMapping("/user/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'SCHOOL')")
     @ApiOperation(value = "Get a particular school by User id")
-    public GenericResponse<Deo> getByUserID(@PathVariable int id) {
+    public GenericResponse<DeoDto> getByUserID(@PathVariable int id) {
         return GenericResponse.success(this.service.getByUserId(id));
     }
 
     @GetMapping("/search")
     @PreAuthorize("hasAnyRole('ADMIN', 'SCHOOL')")
     @ApiOperation(value = "Search deo by different criteria")
-    public GenericResponse<List<Deo>> getAllByCriteria(@RequestParam(value = "district", required = false) String district,
+    public GenericResponse<List<DeoDto>> getAllByCriteria(@RequestParam(value = "district", required = false) String district,
                                                           @RequestParam(defaultValue = "0", required = false) Integer page,
                                                           @RequestParam(defaultValue = "5", required = false) Integer pageSize) {
         Specification<Deo> specification = SpecificationManager.getDeoSpec(district);
         Pageable pageable = PageRequest.of(page, pageSize);
-        List<Deo> schoolList = new ArrayList<>(service.getAllByCriteria(specification, pageable));
-        return GenericResponse.success(schoolList);
+        List<DeoDto> resultList = new ArrayList<>(service.getAllByCriteria(specification, pageable));
+        return GenericResponse.success(resultList);
     }
 
 }

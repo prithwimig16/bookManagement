@@ -7,18 +7,18 @@ import java.util.List;
 
 public interface DeoService {
 
-    Deo updateByUserId(Deo obj, int id);
+    DeoDto updateByUserId(Deo obj, int id);
 
-    Deo getByID(int id);
+    DeoDto getByID(int id);
 
-    List<Deo> getAll(Pageable pageable);
+    List<DeoDto> getAll(Pageable pageable);
 
 
-    Deo getByUserId(int userId);
+    DeoDto getByUserId(int userId);
 
     void delete(int id);
 
-    List<Deo> getAllByCriteria(Specification<Deo> specification, Pageable pageable);
+    List<DeoDto> getAllByCriteria(Specification<Deo> specification, Pageable pageable);
 
     void updateApprovalStatus(Boolean isApproved, int deoUserId);
 }

@@ -9,16 +9,16 @@ public interface SchoolService {
 
     SchoolDto updateByUserId(School obj, int id);
 
-    School getByID(int id);
+    SchoolDto getByID(int id);
 
     List<SchoolDto> getAll(Pageable pageable);
 
 
-    School getByUserId(int userId);
+    SchoolDto getByUserId(int userId);
 
     void delete(int id);
 
-    List<School> getAllByCriteria(Specification<School> specification, Pageable pageable);
+    List<SchoolDto> getAllByCriteria(Specification<School> specification, Pageable pageable);
 
     void updateApprovalStatus(Boolean isApproved, int schoolUserId);
 }

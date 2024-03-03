@@ -58,28 +58,28 @@ public class SchoolController {
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'SCHOOL')")
     @ApiOperation(value = "Get a particular school by id")
-    public GenericResponse<School> getByID(@PathVariable int id) {
+    public GenericResponse<SchoolDto> getByID(@PathVariable int id) {
         return GenericResponse.success(this.service.getByID(id));
     }
 
     @GetMapping("/user/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'SCHOOL')")
     @ApiOperation(value = "Get a particular school by User id")
-    public GenericResponse<School> getByUserID(@PathVariable int id) {
+    public GenericResponse<SchoolDto> getByUserID(@PathVariable int id) {
         return GenericResponse.success(this.service.getByUserId(id));
     }
 
     @GetMapping("/search")
     @PreAuthorize("hasAnyRole('ADMIN', 'SCHOOL')")
     @ApiOperation(value = "Search school by different criteria")
-    public GenericResponse<List<School>> getAllByCriteria(@RequestParam(value = "district", required = false) String district,
+    public GenericResponse<List<SchoolDto>> getAllByCriteria(@RequestParam(value = "district", required = false) String district,
                                                           @RequestParam(value = "pinCode", required = false) String pinCode,
                                                           @RequestParam(value = "isGovt", required = false) boolean isGovt,
                                                           @RequestParam(defaultValue = "0", required = false) Integer page,
                                                           @RequestParam(defaultValue = "5", required = false) Integer pageSize) {
         Specification<School> specification = SpecificationManager.getSchoolSpec(district, pinCode, isGovt);
         Pageable pageable = PageRequest.of(page, pageSize);
-        List<School> schoolList = new ArrayList<>(service.getAllByCriteria(specification, pageable));
+        List<SchoolDto> schoolList = new ArrayList<>(service.getAllByCriteria(specification, pageable));
         return GenericResponse.success(schoolList);
     }
 

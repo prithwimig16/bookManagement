@@ -27,6 +27,7 @@ public class IsServiceImpl implements IsService {
         return repository.findByUserId(id)
                 .map(it -> {
                     it.setAddress(obj.getAddress());
+                    it.setName(obj.getName());
                     it.setPinCode(obj.getPinCode());
                     it.setDistrict(obj.getDistrict());
                     it.setUpdatedAt(LocalDateTime.now());

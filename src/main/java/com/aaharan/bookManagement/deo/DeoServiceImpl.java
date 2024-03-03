@@ -1,16 +1,16 @@
 package com.aaharan.bookManagement.deo;
 
-import com.aaharan.bookManagement.school.School;
-import com.aaharan.bookManagement.school.SchoolRepository;
-import com.aaharan.bookManagement.school.SchoolService;
 import com.amazonaws.services.dlm.model.ResourceNotFoundException;
 import jakarta.annotation.Resource;
 import jakarta.transaction.Transactional;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,37 +18,49 @@ import java.util.List;
 public class DeoServiceImpl implements DeoService {
 
     private @Resource DeoRepository repository;
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Override
-    public Deo updateByUserId(Deo obj, int id) {
+    public DeoDto updateByUserId(Deo obj, int id) {
         return repository.findByUserId(id)
                 .map(it -> {
                     it.setAddress(obj.getAddress());
                     it.setPinCode(obj.getPinCode());
                     it.setDistrict(obj.getDistrict());
                     it.setUpdatedAt(LocalDateTime.now());
-                    return repository.save(it);
+                    repository.save(it);
+                    return this.modelMapper.map(it, DeoDto.class);
                 })
                 .orElseThrow(() -> new ResourceNotFoundException("Id does not exist"));
     }
 
 
     @Override
-    public Deo getByID(int id) {
-        return this.repository.findById(id).
-                orElseThrow(() -> new ResourceNotFoundException("Id does not exist"));
+    public DeoDto getByID(int id) {
+        Deo obj = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("School id doesn't exist"));
+        return this.modelMapper.map(obj, DeoDto.class);
     }
 
     @Override
-    public List<Deo> getAll(Pageable pageable) {
-        return this.repository.findAll(pageable).getContent();
+    public List<DeoDto> getAll(Pageable pageable) {
+        List<Deo> deoList = this.repository.findAll(pageable).getContent();
+        List<DeoDto>resultList=new ArrayList<>();
+        deoList.forEach(it->{
+            DeoDto deoDto = this.modelMapper.map(it, DeoDto.class);
+            resultList.add(deoDto);
+
+        });
+        return resultList;
     }
 
 
     @Override
-    public Deo getByUserId(int userId) {
-        return repository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User id doesn't exist"));
+    public DeoDto getByUserId(int userId) {
+        Deo Obj = repository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("School id doesn't exist"));
+        return this.modelMapper.map(Obj, DeoDto.class);
     }
 
 
@@ -60,8 +72,14 @@ public class DeoServiceImpl implements DeoService {
     }
 
     @Override
-    public List<Deo> getAllByCriteria(Specification<Deo> specification, Pageable pageable) {
-        return this.repository.findAll(specification, pageable);
+    public List<DeoDto> getAllByCriteria(Specification<Deo> specification, Pageable pageable) {
+        List<Deo> allIsList = this.repository.findAll(specification, pageable);
+        List<DeoDto> resultList = new ArrayList<>();
+
+        allIsList.forEach(it -> {
+            resultList.add(this.modelMapper.map(it, DeoDto.class));
+        });
+        return resultList;
     }
 
     @Override
