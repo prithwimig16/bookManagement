@@ -1,5 +1,6 @@
 package com.aaharan.bookManagement.deo;
 
+import com.aaharan.bookManagement.utils.GenericResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -7,7 +8,7 @@ import java.util.List;
 
 public interface DeoService {
 
-    DeoDto updateByUserId(Deo obj, int id);
+    GenericResponse<DeoDto> updateByUserId(Deo obj, int id);
 
     DeoDto getByID(int id);
 

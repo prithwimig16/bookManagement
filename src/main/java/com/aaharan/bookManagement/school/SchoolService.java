@@ -1,5 +1,6 @@
 package com.aaharan.bookManagement.school;
 
+import com.aaharan.bookManagement.utils.GenericResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -7,7 +8,7 @@ import java.util.List;
 
 public interface SchoolService {
 
-    SchoolDto updateByUserId(School obj, int id);
+    GenericResponse<SchoolDto> updateByUserId(School obj, int id);
 
     SchoolDto getByID(int id);
 

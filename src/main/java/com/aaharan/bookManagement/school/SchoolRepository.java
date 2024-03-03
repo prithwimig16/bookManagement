@@ -13,7 +13,7 @@ public interface SchoolRepository extends JpaRepository<School, Integer> {
     Optional<School> findByUserId(int userId);
 
 
-
+    boolean existsBySchoolName(String schoolName);
     List<School> findAll(Specification<School> specification, Pageable pageable);
 
     @Modifying

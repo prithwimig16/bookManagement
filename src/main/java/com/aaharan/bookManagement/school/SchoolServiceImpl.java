@@ -1,5 +1,6 @@
 package com.aaharan.bookManagement.school;
 
+import com.aaharan.bookManagement.utils.GenericResponse;
 import com.amazonaws.services.dlm.model.ResourceNotFoundException;
 import jakarta.annotation.Resource;
 import jakarta.transaction.Transactional;
@@ -21,7 +22,14 @@ public class SchoolServiceImpl implements SchoolService {
     @Autowired
     private ModelMapper modelMapper;
     @Override
-    public SchoolDto updateByUserId(School obj, int id) {
+    public GenericResponse<SchoolDto> updateByUserId(School obj, int id) {
+        if(repository.existsBySchoolName(obj.getSchoolName())){
+            return GenericResponse.<SchoolDto>builder()
+                    .success(false)
+                    .data(null)
+                    .message("Details Already Exist !")
+                    .build();
+        }
         return repository.findByUserId(id)
                 .map(it -> {
                     it.setSchoolName(obj.getSchoolName());
@@ -32,9 +40,24 @@ public class SchoolServiceImpl implements SchoolService {
                     it.setDistrict(obj.getDistrict());
                     it.setUpdatedAt(LocalDateTime.now());
                     repository.save(it);
-                   return this.modelMapper.map(it, SchoolDto.class);
+                    return GenericResponse.success(this.modelMapper.map(it, SchoolDto.class));
                 })
-                .orElseThrow(() -> new ResourceNotFoundException("Id does not exist"));
+                .orElseThrow(() ->   new ResourceNotFoundException("Something went wrong"));
+
+
+//        return repository.findByUserId(id)
+//                .map(it -> {
+//                    it.setSchoolName(obj.getSchoolName());
+//                    it.setAddress(obj.getAddress());
+//                    it.setPinCode(obj.getPinCode());
+//                    it.setGovt(obj.isGovt());
+//                    it.setIsUpdated(true);
+//                    it.setDistrict(obj.getDistrict());
+//                    it.setUpdatedAt(LocalDateTime.now());
+//                    repository.save(it);
+//                   return this.modelMapper.map(it, SchoolDto.class);
+//                })
+//                .orElseThrow(() -> new ResourceNotFoundException("Id does not exist"));
     }
 
 

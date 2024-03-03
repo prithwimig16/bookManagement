@@ -37,8 +37,8 @@ public class DeoController {
     @PreAuthorize("hasAnyRole('ADMIN', 'DEO')")
     @ApiOperation(value = "Update a particular school by id")
     public GenericResponse<DeoDto> updateByUserId(@RequestBody  Deo deo, @PathVariable int id) {
-        DeoDto updatedResult = service.updateByUserId(deo, id);
-        return GenericResponse.success(updatedResult);
+         return service.updateByUserId(deo, id);
+
     }
 
     @PreAuthorize("hasRole('ADMIN')")

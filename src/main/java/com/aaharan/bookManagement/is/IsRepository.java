@@ -13,6 +13,9 @@ public interface IsRepository extends JpaRepository<Is, Integer> {
 
     Optional<Is> findByUserId(int userId);
 
+    boolean existsByPinCode(String pinCode);
+
+    boolean existsByAddress(String address);
 
     List<Is> findAll(Specification<Is> specification, Pageable pageable);
 

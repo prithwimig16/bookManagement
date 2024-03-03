@@ -1,5 +1,7 @@
 package com.aaharan.bookManagement.is;
 
+import com.aaharan.bookManagement.auth.RegisterRequest;
+import com.aaharan.bookManagement.utils.GenericResponse;
 import com.amazonaws.services.dlm.model.ResourceNotFoundException;
 import jakarta.annotation.Resource;
 import jakarta.transaction.Transactional;
@@ -23,7 +25,14 @@ public class IsServiceImpl implements IsService {
     private ModelMapper modelMapper;
 
     @Override
-    public IsDto updateByUserId(Is obj, int id) {
+    public GenericResponse<IsDto> updateByUserId(Is obj, int id) {
+        if(repository.existsByPinCode(obj.getPinCode())||repository.existsByAddress(obj.getAddress())){
+              return GenericResponse.<IsDto>builder()
+                    .success(false)
+                    .data(null)
+                    .message("Details Already Exist !")
+                    .build();
+        }
         return repository.findByUserId(id)
                 .map(it -> {
                     it.setAddress(obj.getAddress());
@@ -32,9 +41,9 @@ public class IsServiceImpl implements IsService {
                     it.setDistrict(obj.getDistrict());
                     it.setUpdatedAt(LocalDateTime.now());
                     repository.save(it);
-                    return this.modelMapper.map(it, IsDto.class);
+                    return GenericResponse.success(this.modelMapper.map(it, IsDto.class));
                 })
-                .orElseThrow(() -> new ResourceNotFoundException("Id does not exist"));
+                .orElseThrow(() ->   new IllegalStateException("Something went wrong"));
     }
 
 

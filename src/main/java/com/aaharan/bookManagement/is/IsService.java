@@ -1,5 +1,6 @@
 package com.aaharan.bookManagement.is;
 
+import com.aaharan.bookManagement.utils.GenericResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -7,7 +8,7 @@ import java.util.List;
 
 public interface IsService {
 
-    IsDto updateByUserId(Is obj, int id);
+    GenericResponse<IsDto> updateByUserId(Is obj, int id);
 
     IsDto getByID(int id);
 

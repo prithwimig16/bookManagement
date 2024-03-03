@@ -12,9 +12,7 @@ import java.util.Optional;
 public interface DeoRepository extends JpaRepository<Deo, Integer> {
 
     Optional<Deo> findByUserId(int userId);
-
-
-
+    boolean existsByDistrict(String district);
     List<Deo> findAll(Specification<Deo> specification, Pageable pageable);
 
     @Modifying

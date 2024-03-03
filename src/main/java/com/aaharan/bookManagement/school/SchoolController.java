@@ -35,8 +35,8 @@ public class SchoolController {
     @PreAuthorize("hasAnyRole('ADMIN', 'SCHOOL')")
     @ApiOperation(value = "Update a particular school by id")
     public GenericResponse<SchoolDto> updateByUserId(@RequestBody School school, @PathVariable int id) {
-        SchoolDto updatedSchool = service.updateByUserId(school, id);
-        return GenericResponse.success(updatedSchool);
+      return service.updateByUserId(school, id);
+
     }
 
     @PreAuthorize("hasRole('ADMIN')")

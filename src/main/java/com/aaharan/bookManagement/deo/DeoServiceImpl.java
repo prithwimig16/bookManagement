@@ -1,5 +1,6 @@
 package com.aaharan.bookManagement.deo;
 
+import com.aaharan.bookManagement.utils.GenericResponse;
 import com.amazonaws.services.dlm.model.ResourceNotFoundException;
 import jakarta.annotation.Resource;
 import jakarta.transaction.Transactional;
@@ -22,7 +23,14 @@ public class DeoServiceImpl implements DeoService {
     private ModelMapper modelMapper;
 
     @Override
-    public DeoDto updateByUserId(Deo obj, int id) {
+    public GenericResponse<DeoDto> updateByUserId(Deo obj, int id) {
+        if(repository.existsByDistrict(obj.getDistrict())){
+            return GenericResponse.<DeoDto>builder()
+                    .success(false)
+                    .data(null)
+                    .message("Details Already Exist !")
+                    .build();
+        }
         return repository.findByUserId(id)
                 .map(it -> {
                     it.setAddress(obj.getAddress());
@@ -30,9 +38,20 @@ public class DeoServiceImpl implements DeoService {
                     it.setDistrict(obj.getDistrict());
                     it.setUpdatedAt(LocalDateTime.now());
                     repository.save(it);
-                    return this.modelMapper.map(it, DeoDto.class);
+                    return GenericResponse.success(this.modelMapper.map(it, DeoDto.class));
                 })
-                .orElseThrow(() -> new ResourceNotFoundException("Id does not exist"));
+                .orElseThrow(() ->   new ResourceNotFoundException("Something went wrong"));
+
+//        return repository.findByUserId(id)
+//                .map(it -> {
+//                    it.setAddress(obj.getAddress());
+//                    it.setPinCode(obj.getPinCode());
+//                    it.setDistrict(obj.getDistrict());
+//                    it.setUpdatedAt(LocalDateTime.now());
+//                    repository.save(it);
+//                    return this.modelMapper.map(it, DeoDto.class);
+//                })
+//                .orElseThrow(() -> new ResourceNotFoundException("Id does not exist"));
     }
 
 
