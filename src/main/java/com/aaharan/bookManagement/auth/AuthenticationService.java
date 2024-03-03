@@ -5,6 +5,8 @@ import com.aaharan.bookManagement.config.AppConstraints;
 import com.aaharan.bookManagement.config.JwtService;
 import com.aaharan.bookManagement.deo.Deo;
 import com.aaharan.bookManagement.deo.DeoRepository;
+import com.aaharan.bookManagement.is.Is;
+import com.aaharan.bookManagement.is.IsRepository;
 import com.aaharan.bookManagement.model.enums.RoleName;
 import com.aaharan.bookManagement.role.BmRole;
 import com.aaharan.bookManagement.role.RoleService;
@@ -53,10 +55,13 @@ public class AuthenticationService {
     private DeoRepository deoRepository;
 
     @Autowired
+    private IsRepository isRepository;
+
+    @Autowired
     private ModelMapper modelMapper;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationResponse register(RegisterRequest request) {
+    public void register(RegisterRequest request) {
         Role userRole = Role.ADMIN;
         if(request.getRoleName().equals(AppConstraints.ROLE_SCHOOL)){
             userRole=Role.SCHOOL;
@@ -106,12 +111,22 @@ public class AuthenticationService {
                 deo.setUpdatedAt(LocalDateTime.now());
                 deoRepository.save(deo);
             }
+
+            if (role.getRoleName().equals(RoleName.IS)) {
+                Is isObj = new Is();
+                isObj.setUser(savedUser);
+                isObj.setIsApproved(false);
+                isObj.setIsUpdated(false);
+                isObj.setCreatedAt(LocalDateTime.now());
+                isObj.setUpdatedAt(LocalDateTime.now());
+                isRepository.save(isObj);
+            }
         }
         var jwtToken = jwtService.generateToken(nUser);
         var refreshToken = jwtService.generateRefreshToken(nUser);
         saveUserToken(savedUser, jwtToken);
         UserDto userDto = this.modelMapper.map(savedUser, UserDto.class);
-        return AuthenticationResponse.builder()
+        AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
                 .user(userDto)
