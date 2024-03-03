@@ -25,7 +25,7 @@ public class SchoolController {
     @GetMapping("")
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "This method getting all the list of schools available in the system")
-    public GenericResponse<List<School>> getAll(@RequestParam(defaultValue = "0", required = false) Integer page,
+    public GenericResponse<List<SchoolDto>> getAll(@RequestParam(defaultValue = "0", required = false) Integer page,
                                                 @RequestParam(defaultValue = "5", required = false) Integer pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
         return GenericResponse.success(new ArrayList<>(service.getAll(pageable)));
@@ -34,8 +34,8 @@ public class SchoolController {
     @PutMapping("/user/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'SCHOOL')")
     @ApiOperation(value = "Update a particular school by id")
-    public GenericResponse<School> updateByUserId(@Valid @ModelAttribute School school, @PathVariable int id) {
-        School updatedSchool = service.updateByUserId(school, id);
+    public GenericResponse<SchoolDto> updateByUserId(@RequestBody School school, @PathVariable int id) {
+        SchoolDto updatedSchool = service.updateByUserId(school, id);
         return GenericResponse.success(updatedSchool);
     }
 

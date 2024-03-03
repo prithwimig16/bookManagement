@@ -90,6 +90,9 @@ public class AuthenticationService {
             if (role.getRoleName().equals(RoleName.SCHOOL)) {
                 School school = new School();
                 school.setUser(savedUser);
+                school.setGovt(true);
+                school.setIsApproved(false);
+                school.setIsUpdated(false);
                 school.setCreatedAt(LocalDateTime.now());
                 school.setUpdatedAt(LocalDateTime.now());
                 schoolRepository.save(school);
@@ -97,6 +100,8 @@ public class AuthenticationService {
             if (role.getRoleName().equals(RoleName.DEO)) {
                 Deo deo = new Deo();
                 deo.setUser(savedUser);
+                deo.setIsApproved(false);
+                deo.setIsUpdated(false);
                 deo.setCreatedAt(LocalDateTime.now());
                 deo.setUpdatedAt(LocalDateTime.now());
                 deoRepository.save(deo);
@@ -105,9 +110,11 @@ public class AuthenticationService {
         var jwtToken = jwtService.generateToken(nUser);
         var refreshToken = jwtService.generateRefreshToken(nUser);
         saveUserToken(savedUser, jwtToken);
+        UserDto userDto = this.modelMapper.map(savedUser, UserDto.class);
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
+                .user(userDto)
                 .build();
     }
 

@@ -7,11 +7,11 @@ import java.util.List;
 
 public interface SchoolService {
 
-    School updateByUserId(School obj, int id);
+    SchoolDto updateByUserId(School obj, int id);
 
     School getByID(int id);
 
-    List<School> getAll(Pageable pageable);
+    List<SchoolDto> getAll(Pageable pageable);
 
 
     School getByUserId(int userId);

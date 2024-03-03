@@ -8,12 +8,13 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserDto {
+    private String id;
     private String firstName;
     private String lastName;
-    // private String password;
     private String email;
     private Role role;
     private boolean isApproved;
+
 
 
 //    public User getUserFromDto() {

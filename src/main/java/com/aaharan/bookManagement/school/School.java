@@ -32,9 +32,9 @@ public class School {
     private String pinCode;
     @Column(nullable = true,columnDefinition="tinyint(1) default 1")
     private boolean isGovt;
-    @Column(columnDefinition = "boolean default false")
+    @Column(nullable = true,columnDefinition="tinyint(1) default 0")
     private Boolean isUpdated;
-    @Column(columnDefinition = "boolean default false")
+    @Column(nullable = true,columnDefinition="tinyint(1) default 0")
     private Boolean isApproved;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
