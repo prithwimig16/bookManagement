@@ -1,5 +1,4 @@
 package com.aaharan.bookManagement.auth;
-import com.aaharan.bookManagement.user.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,8 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RegisterRequest {
 
-  private String firstname;
-  private String lastname;
+  private String firstName;
+  private String lastName;
   private String email;
   private String password;
   private String roleName;
